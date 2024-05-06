@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MP3 Player</title>
+  <style>
+    .track.active {
+      color: #ff0000; /* или любой цвет на ваш вкус */
+    }
+  </style>
+</head>
+<body>
+  <div id="music-list">
+    <!-- Список треков будет сгенерирован здесь -->
+  </div>
+  <button id="prev">Previous</button>
+  <button id="next">Next</button>
+  <br>
+  <audio id="audio" controls autoplay></audio>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+    const audioPlayer = document.getElementById('audio');
+    const musicListElement = document.getElementById('music-list');
+
+    ipcRenderer.on('musicFiles', (event, musicFiles) => {
+  musicListElement.innerHTML = musicFiles.map((musicFile, index) => {
+    return '<div class="track" data-index="' + index +'" data-path="' + musicFile.path + '">' + musicFile.name + '</div>';
+  }).join('');
+  playSong(0);
+});
+
+    musicListElement.addEventListener('click', (event) => {
+      if (event.target.className === 'track') {
+        playSong(event.target.dataset.index);
+      }
+    });
+
+    document.getElementById('prev').addEventListener('click', () => {
+  let currentIndex = parseInt(audioPlayer.dataset.index, 10);
+  let prevIndex = currentIndex - 1;
+  if (prevIndex < 0) {
+    prevIndex = musicListElement.children.length - 1;
+  }
+  playSong(prevIndex);
+});
+
+document.getElementById('next').addEventListener('click', () => {
+  let currentIndex = parseInt(audioPlayer.dataset.index, 10);
+  let nextIndex = (currentIndex + 1) % musicListElement.children.length;
+  playSong(nextIndex);
+});
+
+function playSong(index) {
+  const trackElement = musicListElement.children[index];
+  audioPlayer.src = trackElement.getAttribute('data-path');
+  audioPlayer.dataset.index = index;
+  audioPlayer.play();
+  
+  // Обновляем стили для активного и неактивного трека
+  for (const element of musicListElement.children) {
+    element.classList.remove('active');
+  }
+  trackElement.classList.add('active');
+}
+
+    audioPlayer.onended = () => {
+      let newIndex = parseInt(audioPlayer.getAttribute('data-index')) + 1;
+      if (newIndex >= musicListElement.children.length) {
+        newIndex = 0; // Возвращаемся к первой песне
+      }
+      playSong(newIndex);
+    };
+  </script>
+</body>
+</html>

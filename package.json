@@ -1,0 +1,26 @@
+{
+  "name": "mp3player",
+  "version": "1.0.0",
+  "description": "mp3 player for Obsidian",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "--test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Awerbond/mp3player.git"
+  },
+  "keywords": [
+    "mp3",
+    "music",
+    "player",
+    "obsidian"
+  ],
+  "author": "Mak Ruder",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Awerbond/mp3player/issues"
+  },
+  "homepage": "https://github.com/Awerbond/mp3player#readme"
+}
